@@ -59,6 +59,7 @@ def update_user(db: Session, user_id: UUID, user: schemas.UserUpdate):
 
         db.commit()
         db.refresh(db_user)
+        
         return {"mensagem": "Usuário atualizado"}  # Retorna o usuário atualizado
 
     except IntegrityError:
