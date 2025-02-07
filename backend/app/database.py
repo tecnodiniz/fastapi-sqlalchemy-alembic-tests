@@ -8,6 +8,7 @@ DATABASE_URL = "postgresql://eduardo:l0ck3d0u7@localhost:5432/user_test"
 #Criação do engine para a conexão com o banco
 
 engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
