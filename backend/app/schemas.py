@@ -14,7 +14,7 @@ class AddressBase(BaseModel):
 class AddressCreate(AddressBase):
     pass
 
-class AddressResponse(AddressBase):
+class AddressResponse(AddressBase): 
     id: UUID
     user_id: UUID
     

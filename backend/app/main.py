@@ -30,13 +30,14 @@ def get_users(db: Session = Depends(database.get_db)):
     users = crud.get_users(db)
     return users
 
-@app.patch("/users/{user_id}", response_model=schemas.UserBase)
+@app.patch("/users/{user_id}", response_model=dict)
 def update_user(user_id: UUID, user: schemas.UserUpdate, db: Session = Depends(database.get_db)):
-    db_user = crud.update_user(db, user_id, user)
-    if user is None:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
-    
-    return  db_user
+    return crud.update_user(db, user_id, user)
+
+
+@app.delete("/users/{user_id}", response_model=dict)
+def delete_user(user_id: UUID, db: Session = Depends(database.get_db)):
+    return crud.delete_user(db,user_id)
   
 
 # Address

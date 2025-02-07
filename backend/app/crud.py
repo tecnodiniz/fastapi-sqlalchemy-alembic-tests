@@ -59,7 +59,7 @@ def update_user(db: Session, user_id: UUID, user: schemas.UserUpdate):
 
         db.commit()
         db.refresh(db_user)
-        return db_user  # Retorna o usuário atualizado
+        return {"mensagem": "Usuário atualizado"}  # Retorna o usuário atualizado
 
     except IntegrityError:
         db.rollback()
@@ -68,6 +68,20 @@ def update_user(db: Session, user_id: UUID, user: schemas.UserUpdate):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Erro ao atualizar usuário: {str(e)}")
+
+
+def delete_user(db: Session, user_id: UUID):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontral")
+    
+    try:
+        db.delete(user)
+        db.commit()
+
+        return {"messagem": "Usuário deletado com sucesso"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Erro ao deletar usuário {e}") 
 
 # Address
 
