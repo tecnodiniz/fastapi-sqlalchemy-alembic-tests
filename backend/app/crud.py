@@ -12,7 +12,7 @@ def hash_password(password: str) -> str:
 
 def create_user(db: Session, user: schemas.UserCreate):
     password = hash_password(user.password)
-    db_user = models.User(username=user.username, email=user.email, hashed_password=password)
+    db_user = models.User(name=user.name, username=user.username, email=user.email, hashed_password=password)
 
     try:
         db.add(db_user)
@@ -30,6 +30,44 @@ def get_user(db: Session, user_id: UUID):
 def get_users(db: Session):
     return db.query(models.User).all()
 
+def update_user(db: Session, user_id: UUID, user: schemas.UserUpdate):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    # Converte os dados enviados, excluindo valores não definidos
+    update_data = user.model_dump(exclude_unset=True)
+
+    # Se o e-mail foi enviado na atualização, verifica se já está cadastrado para outro usuário
+    if "email" in update_data:
+        email_exists = db.query(models.User).filter(
+            models.User.email == update_data["email"],
+            models.User.id != user_id  # Garante que não estamos verificando o próprio usuário
+        ).first()
+
+        if email_exists:
+            raise HTTPException(status_code=400, detail="Este e-mail já está em uso por outro usuário")
+
+    # Se o usuário quer atualizar a senha, hash da nova senha
+    if "password" in update_data:
+        update_data["hashed_password"] = pwd_context.hash(update_data.pop("password"))
+
+    try:
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+
+        db.commit()
+        db.refresh(db_user)
+        return db_user  # Retorna o usuário atualizado
+
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Erro de integridade. Verifique os dados enviados.")
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao atualizar usuário: {str(e)}")
 
 # Address
 

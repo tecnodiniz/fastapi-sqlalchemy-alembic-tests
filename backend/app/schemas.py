@@ -23,12 +23,19 @@ class AddressResponse(AddressBase):
 
 # User
 class UserBase(BaseModel):
+    name: Optional[str]
     username: str
     email: EmailStr
 
 class UserCreate(UserBase):
     password: str
 
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
 
 class UserResponse(UserBase):
     id: UUID
