@@ -106,5 +106,30 @@ def create_address(db: Session, address: schemas.AddressCreate):
         db.rollback()  # Rollback em caso de erro
         raise HTTPException(status_code=500, detail=f"Erro ao criar endereço: {str(e)}")
 
-def get_address(db: Session, address_id: UUID):
-    return db.query(models.Address).filter(models.Address.id == address_id).join(models.Address.user).first()
+def get_address(db: Session, user_id: UUID):
+      address = db.query(models.Address).filter(models.Address.user_id == user_id).first()
+     
+      if not address:
+        raise HTTPException(status_code=404, detail="Endereço não encontrado")
+      return address
+ 
+
+def update_address(db: Session, user_id: UUID, address: schemas.AddressUpdate):
+    db_address = db.query(models.Address).filter(models.Address.user_id == user_id).first()
+
+    if not db_address:
+        raise HTTPException(status_code=404, detail="Endereço não encontrado")
+    
+    update_address = address.model_dump(exclude_unset=True)
+
+    for key, value in update_address.items():
+        setattr(db_address, key, value)
+
+    try:
+        db.commit()
+        db.refresh(db_address)
+        
+        return {"mesagem": "Endereço atualizado com sucesso"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Erro ao atualizar endereço {e}")

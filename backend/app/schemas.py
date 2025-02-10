@@ -11,6 +11,12 @@ class AddressBase(BaseModel):
     state: str
     zip_code: str
 
+class AddressUpdate(BaseModel):
+    street:  Optional[str]  = None
+    city:    Optional[str] = None
+    state:   Optional[str] = None
+    zip_code:Optional[str]  = None
+
 class AddressCreate(AddressBase):
     pass
 
@@ -19,7 +25,7 @@ class AddressResponse(AddressBase):
     user_id: UUID
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # User
 class UserBase(BaseModel):
@@ -42,7 +48,7 @@ class UserResponse(UserBase):
     address: Optional["AddressResponse"]
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 

@@ -41,12 +41,15 @@ def delete_user(user_id: UUID, db: Session = Depends(database.get_db)):
   
 
 # Address
-@app.post("/addresses/", response_model=schemas.AddressResponse)
+@app.post("/address/", response_model=schemas.AddressResponse)
 def create_address(address: schemas.AddressCreate, db: Session = Depends(database.get_db)):
     return crud.create_address(db, address)
 
-@app.get("/addressess/{address_id}", response_model=schemas.AddressResponse)
-def read_address(address_id: UUID, db: Session = Depends(database.get_db)):
-    address = crud.get_address(db, address_id)
-    if address is None:
-        raise HTTPException(status_code=404, detail="Endereço não encontrado")
+@app.get("/address/{user_id}", response_model=schemas.AddressResponse)
+def read_address(user_id: UUID, db: Session = Depends(database.get_db)):
+    return crud.get_address(db, user_id)
+  
+    
+@app.patch("/address/{user_id}", response_model=dict)
+def update_address(user_id: UUID, address: schemas.AddressUpdate, db: Session = Depends(database.get_db)):
+    return crud.update_address(db,user_id, address)
