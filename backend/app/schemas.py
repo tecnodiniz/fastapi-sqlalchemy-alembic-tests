@@ -42,10 +42,11 @@ class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None
+    address: Optional[AddressUpdate] = None
 
 class UserResponse(UserBase):
     id: UUID
-    address: Optional["AddressResponse"]
+    address: Optional[AddressResponse]
     
     class Config:
         from_attributes = True

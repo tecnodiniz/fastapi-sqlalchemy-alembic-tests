@@ -39,7 +39,6 @@ def update_user(db: Session, user_id: UUID, user: schemas.UserUpdate):
     # Converte os dados enviados, excluindo valores não definidos
     update_data = user.model_dump(exclude_unset=True)
 
-    # Se o e-mail foi enviado na atualização, verifica se já está cadastrado para outro usuário
     if "email" in update_data:
         email_exists = db.query(models.User).filter(
             models.User.email == update_data["email"],
@@ -49,18 +48,30 @@ def update_user(db: Session, user_id: UUID, user: schemas.UserUpdate):
         if email_exists:
             raise HTTPException(status_code=400, detail="Este e-mail já está em uso por outro usuário")
 
-    # Se o usuário quer atualizar a senha, hash da nova senha
+
     if "password" in update_data:
         update_data["hashed_password"] = pwd_context.hash(update_data.pop("password"))
+  
+    print(update_data)
 
     try:
+        if "address" in update_data:
+            if isinstance(update_data["address"], dict):
+                 if db_user.address:
+                    for addr_key, addr_value in update_data["address"].items():
+                        setattr(db_user.address, addr_key, addr_value)
+                 else:
+                    new_address = models.Address(**update_data["address"], user_id=user_id)
+                    db.add(new_address)
+
         for key, value in update_data.items():
-            setattr(db_user, key, value)
+            if key != "address" and value is not None:
+                setattr(db_user, key, value)
 
         db.commit()
         db.refresh(db_user)
         
-        return {"mensagem": "Usuário atualizado"}  # Retorna o usuário atualizado
+        return {"mensagem": "Usuário atualizado"} 
 
     except IntegrityError:
         db.rollback()

@@ -2,9 +2,30 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
 import crud, models, schemas, database
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:5173"
+]
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
+#     allow_headers=["*"],
+    
+# )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas as origens (modifique se necessário)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 models.Base.metadata.create_all(bind=database.engine)
 
 
