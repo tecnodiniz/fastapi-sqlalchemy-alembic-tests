@@ -8,6 +8,7 @@ const api = axios.create({
   },
 })
 
+export const new_user = (data) => api.post('/users/', data)
 export const get_users = () => api.get('/users/')
 export const update_user = (id, data) => api.patch(`/users/${id}`, data)
 

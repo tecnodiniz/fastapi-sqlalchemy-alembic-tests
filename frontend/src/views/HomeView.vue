@@ -3,10 +3,12 @@ import { ref } from 'vue'
 import { useUsers } from '@/composables/useUsers'
 import TableComponent from '@/components/TableComponent.vue'
 import EditUserFormComponent from '@/components/EditUserFormComponent.vue'
+import NewUserFormComponent from '@/components/NewUserFormComponent.vue'
 
-const { users, updateUser } = useUsers()
+const { users, createUser, updateUser } = useUsers()
 const user = ref()
 const dialog = ref(false)
+const newUserDialog = ref(false)
 
 const columns = ref([
   { key: 'name', label: 'Name' },
@@ -18,18 +20,31 @@ const columns = ref([
   { key: 'zip_code', label: 'zipcode' },
 ])
 
-const userEditForm = (selectedUser) => {
+const handleNewUser = (user) => createUser(user)
+const handleUserEdit = (user) => updateUser(user)
+
+const editUserForm = (selectedUser) => {
   user.value = selectedUser
   dialog.value = true
-}
-const handleUserEdit = (user) => {
-  updateUser(user)
 }
 </script>
 
 <template>
   <!-- :edit="true" :remove="true" to add actions -->
-  <TableComponent :items="users" :columns="columns" :edit="true" @edit="userEditForm" />
+
+  <TableComponent
+    :items="users"
+    :columns="columns"
+    :edit="true"
+    @edit="editUserForm"
+    @new="newUserDialog = true"
+  />
+
+  <NewUserFormComponent
+    :dialog="newUserDialog"
+    @close="newUserDialog = false"
+    @new-user="handleNewUser"
+  />
 
   <EditUserFormComponent
     v-if="user && dialog"

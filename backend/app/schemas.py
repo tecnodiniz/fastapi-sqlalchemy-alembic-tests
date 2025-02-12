@@ -35,6 +35,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    address: Optional[AddressUpdate] = None
 
 
 class UserUpdate(BaseModel):

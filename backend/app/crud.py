@@ -18,6 +18,18 @@ def create_user(db: Session, user: schemas.UserCreate):
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
+
+        db_address = models.Address(
+        user_id = db_user.id,
+        street = user.address.street,
+        city =      user.address.city,
+        state =     user.address.state,
+        zip_code =  user.address.zip_code
+    )
+        db.add(db_address)
+        db.commit()
+        db.refresh(db_address)
+
         return db_user
     
     except IntegrityError:
@@ -51,8 +63,6 @@ def update_user(db: Session, user_id: UUID, user: schemas.UserUpdate):
 
     if "password" in update_data:
         update_data["hashed_password"] = pwd_context.hash(update_data.pop("password"))
-  
-    print(update_data)
 
     try:
         if "address" in update_data:

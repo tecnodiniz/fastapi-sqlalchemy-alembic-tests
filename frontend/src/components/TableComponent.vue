@@ -15,9 +15,17 @@ defineProps({
     type: Boolean,
   },
 })
-defineEmits(['edit'])
+defineEmits(['new', 'edit'])
 </script>
 <template>
+  <v-btn
+    prepend-icon="mdi-plus-circle"
+    variant="flat"
+    color="blue"
+    class="ma-2"
+    @click="$emit('new')"
+    >New</v-btn
+  >
   <v-table class="text-center">
     <thead>
       <tr>

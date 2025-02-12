@@ -1,9 +1,17 @@
 import { ref, onMounted } from 'vue'
-import { get_users, update_user } from '@/services/api'
+import { get_users, new_user, update_user } from '@/services/api'
 
 export function useUsers() {
   const users = ref([])
-
+  const error = ref(false)
+  const createUser = (user) => {
+    new_user(user)
+      .then((response) => {
+        console.log(response.data)
+        fetchUsers()
+      })
+      .catch(() => (error.value = true))
+  }
   const fetchUsers = () => {
     get_users()
       .then((response) => {
@@ -39,5 +47,5 @@ export function useUsers() {
 
   onMounted(fetchUsers)
 
-  return { users, fetchUsers, updateUser }
+  return { users, fetchUsers, updateUser, createUser, error }
 }
