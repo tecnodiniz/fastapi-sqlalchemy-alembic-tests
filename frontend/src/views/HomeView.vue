@@ -5,7 +5,16 @@ import TableComponent from '@/components/TableComponent.vue'
 import EditUserFormComponent from '@/components/EditUserFormComponent.vue'
 import NewUserFormComponent from '@/components/NewUserFormComponent.vue'
 
-const { users, createUser, updateUser } = useUsers()
+const {
+  users,
+  createUser,
+  updateUser,
+  deleteUser,
+  userErrorRaised,
+  userErrorMessage,
+  userErrorFalse,
+} = useUsers()
+
 const user = ref()
 const dialog = ref(false)
 const newUserDialog = ref(false)
@@ -21,7 +30,13 @@ const columns = ref([
 ])
 
 const handleNewUser = (user) => createUser(user)
-const handleUserEdit = (user) => updateUser(user)
+const handleEditUser = (user) => updateUser(user)
+const handleDeleteUser = (user_id) => deleteUser(user_id)
+
+const handleNewUserFormClose = () => {
+  newUserDialog.value = false
+  userErrorFalse()
+}
 
 const editUserForm = (selectedUser) => {
   user.value = selectedUser
@@ -36,21 +51,25 @@ const editUserForm = (selectedUser) => {
     :items="users"
     :columns="columns"
     :edit="true"
+    :remove="true"
+    @delete="handleDeleteUser"
     @edit="editUserForm"
     @new="newUserDialog = true"
   />
 
   <NewUserFormComponent
     :dialog="newUserDialog"
-    @close="newUserDialog = false"
+    @close="handleNewUserFormClose"
     @new-user="handleNewUser"
-  />
+  >
+    <slot v-if="userErrorRaised">{{ userErrorMessage }}</slot>
+  </NewUserFormComponent>
 
   <EditUserFormComponent
     v-if="user && dialog"
     :user="user"
     @close="dialog = false"
     :dialog="dialog"
-    @edit-user="handleUserEdit"
+    @edit-user="handleEditUser"
   />
 </template>

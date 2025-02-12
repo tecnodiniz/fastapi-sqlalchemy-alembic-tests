@@ -78,7 +78,7 @@ const emitUser = () => {
             <v-col cols="12" sm="6">
               <v-text-field
                 v-model="form.email"
-                label="Email"
+                label="Email*"
                 type="email"
                 required
                 :rules="[rules.required]"
@@ -87,7 +87,7 @@ const emitUser = () => {
             <v-col cols="12" sm="6">
               <v-text-field
                 v-model="form.username"
-                label="Username"
+                label="Username*"
                 type="text"
                 required
                 :rules="[rules.required]"
@@ -116,9 +116,11 @@ const emitUser = () => {
             </v-col>
           </v-row>
         </v-form>
-        <slot></slot>
+        <div class="d-flex flex-column">
+          <small class="text-red"><slot></slot></small>
 
-        <small class="text-caption text-medium-emphasis">*indicates required field</small>
+          <small class="text-caption text-medium-emphasis">*indicates required field</small>
+        </div>
       </v-card-text>
 
       <v-divider></v-divider>

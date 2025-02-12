@@ -32,9 +32,14 @@ def create_user(db: Session, user: schemas.UserCreate):
 
         return db_user
     
-    except IntegrityError:
+    except IntegrityError as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail="Email já cadastrado")
+        if "email" in str(e.orig):
+            raise HTTPException(status_code=400, detail="Email já cadastrado")
+        elif "username" in str(e.orig):
+            raise HTTPException(status_code=400, detail="Username já cadastrado")
+        else:
+            raise HTTPException(status_code=400, detail="Erro ao cadastrar usuário")
     
 def get_user(db: Session, user_id: UUID):
     return db.query(models.User).filter(models.User.id == user_id).first()

@@ -15,7 +15,7 @@ defineProps({
     type: Boolean,
   },
 })
-defineEmits(['new', 'edit'])
+defineEmits(['new', 'edit', 'delete'])
 </script>
 <template>
   <v-btn
@@ -49,7 +49,13 @@ defineEmits(['new', 'edit'])
               @click="$emit('edit', item)"
             >
             </v-btn>
-            <v-btn v-if="remove" icon="mdi-delete-circle" variant="plain"> </v-btn>
+            <v-btn
+              v-if="remove"
+              icon="mdi-delete-circle"
+              variant="plain"
+              @click="$emit('delete', item.id)"
+            >
+            </v-btn>
           </div>
         </td>
       </tr>
