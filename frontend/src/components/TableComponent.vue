@@ -26,7 +26,8 @@ defineEmits(['new', 'edit', 'delete'])
     @click="$emit('new')"
     >New</v-btn
   >
-  <v-table class="text-center">
+
+  <v-table class="text-center" fixed-header height="300px" theme="dark">
     <thead>
       <tr>
         <th v-for="col in columns" :key="col.key" class="text-center">{{ col.label }}</th>
